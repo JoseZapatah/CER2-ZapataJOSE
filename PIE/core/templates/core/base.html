@@ -1,0 +1,394 @@
+{% load static %}
+{% load has_group %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PIE</title>
+    <link rel="stylesheet" href="{% static "core/css/bootstrap.min.css" %}">
+    <script src="{% static "core/js/bootstrap.bundle.min.js" %}"></script>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg  navbar-dark sticky-top" style="background-color: #3b424c">
+        <div class="container-fluid" style="padding-left: 0;">
+            <a class="navbar-brand" href="#">
+                <img src="../../static/core/img/Barra Colores.png" alt="Barra Colores" style="width:20px;"> 
+                PIE USM SVM
+            </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#Inicio">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#Proyectos">Proyectos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="#IniciarSesion">Iniciar Sesión</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div id="Inicio" class="card" style="border: 0;">
+        <img src="../../static/core/img/svm.jpg" alt="SVM" class="card-img" style="border-radius: 0; max-height: 50vw;">
+        <div class="card-img-overlay text-center" style="padding: 10vw;">
+            <h1 class="card-title">Portal de Iniciativas Estudiantiles</h1>
+            <h6 class="card-text">Universidad Santa Maria - Sede Viña del Mar</h6>
+        </div>
+    </div>
+    <div id="Proyectos" class="container-fluid text-center" style="padding: 2vw;">
+
+        <!-- Propuesta -->
+        <div class="modal fade" id="Propuesta" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Propuesta</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="{% url 'nueva_propuesta' %}" method="post">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="Proyecto" class="form-label">Nombre Proyecto:</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="Proyecto"
+                                    id="Proyecto"
+                                    placeholder="Proyecto"
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="nombreEstudiante" class="form-label">Estudiante</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="NombreEstudiante"
+                                    id="NombreEstudiante"
+                                    placeholder="Nombre Estudiante"
+                                    disabled
+                                    value="{{user.first_name}} {{user.last_name}}"
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Profesor" class="form-label">Profesor</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="Profesor"
+                                    id="Profesor"
+                                    placeholder="Profesor"
+                                    disabled
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Tema" class="form-label">Tema</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    name="Tema"
+                                    id="Tema"
+                                    placeholder="Tema"
+                                />
+                            </div>
+                            <div class="mb-3">
+                                <label for="Descripcion" class="form-label">Descripcion</label>
+                                <textarea class="form-control" name="Descripcion" id="Descripcion" rows="5"></textarea>
+                            </div>
+                            
+                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button
+                                type="submit"
+                                class="btn btn-primary"
+                            >
+                                Enviar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <h6>Portafolio</h6>
+        <h1>Proyectos Presentados</h1>
+        <br><br>
+        {% if request.user|has_group:"Alumno" %}
+        <div class="row g-6">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Propuesta">
+                Añadir propuesta
+            </button>
+            <br>
+        </div>
+        {% elif request.user|has_group:"Profesor" %}
+        <form action="" method="get">
+            <div class="row">
+
+                <div class="col-md-8">
+                    
+                    <select class="form-select" id="filtrar" name="filtrar" aria-label="Default select example">
+                        <option selected value="1">Todo</option>
+                        <option value="0">con patrocinio</option>
+                        <option value="2">Sin patrocinio</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button
+                    type="submit"
+                    class="btn btn-primary"
+                    >
+                    Filtrar
+                </button>
+            </div>
+            </div>
+            
+            
+        </form>
+
+        {% else %}
+        <form action="" method="get" class="row g-6">
+            <div class="col-auto">
+                <input class="form-control" list="datalistOptions" id="tema" name="tema" placeholder="Buscador por tema">
+                <datalist id="datalistOptions">
+                    {% for tema in datalist %}
+                    {% for x in tema %}
+                    <option value="{{ x }}">
+                        {% endfor %}
+                        {% endfor %}
+                    </datalist>
+            </div>
+            <div class="col-auto">
+                <input type="submit" value="Buscar" class="btn">
+            </div>
+        </form>
+        <br>
+
+        {% endif %}
+        <div
+            class="table-responsive"
+        >
+            <table
+                class="table table-secondary"
+            >
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre Proyecto</th>
+                        <th scope="col">Estudiante</th>
+                        <th scope="col">Tema</th>
+                        <th scope="col">Profesor</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in tabla %}
+                    <tr class="">
+                        
+                        <td scope="row"> {{ item.nombre }} </td>
+                        <td>{{ item.estudiante }}</td>
+                        <td>{{ item.tema }}</td>
+                        <td>{{ item.profesor }}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#verPropuesta{{item.id}}">
+                                ver
+                            </button>
+                            <div class="modal fade" id="verPropuesta{{item.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Propuesta</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                            <div class="modal-body">
+                                                
+                                                <div class="mb-3">
+                                                    <label for="Proyecto" class="form-label">Nombre Proyecto:</label>
+                                                    <h3> {{item.nombre}} </h3>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="nombreEstudiante" class="form-label">Nombre estudiante:</label>
+                                                    <h3> {{item.estudiante}} </h3>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="Profesor" class="form-label">Profesor</label>
+                                                    <h3> {{item.profesor}} </h3>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="Tema" class="form-label">Tema</label>
+                                                    <h3> {{item.tema}} </h3>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="Descripcion" class="form-label">Descripcion</label>
+                                                    <p>{{item.descripcion}}</p>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                            </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if request.user|has_group:"Profesor" %} 
+                            <form action=" {% url "apoyar" %} " method="get">
+                                <input type="hidden" id="idPropuesta" name="namePropuesta" value="{{ item.id }}">
+                                <button
+                                type="submit"
+                                class="btn btn-primary"
+                                >
+                                Patrocinar
+                                </button>
+                            </form>
+
+                            {% elif request.user|has_group:"Alumno" %}
+
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Propuesta{{item.id}}">
+                                Editar
+                            </button>
+
+                            <div class="modal fade" id="Propuesta{{item.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Nueva Propuesta</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{% url 'editar_propuesta' %}" method="get">
+                                            <div class="modal-body">
+                                                <input type="hidden" name="id" id="id" value="{{item.id}}">
+                                                <div class="mb-3">
+                                                    <label for="Proyecto" class="form-label">Nombre Proyecto:</label>
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        name="Proyecto"
+                                                        id="Proyecto"
+                                                        placeholder="Proyecto"
+                                                        value="{{item.nombre}}"
+                                                    />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <input
+                                                        type="hidden"
+                                                        class="form-control"
+                                                        name="nombreEstudiante"
+                                                        id="nombreEstudiante"
+                                                        placeholder="Nombre Estudiante"
+                                                        value="{{item.estudiante}}"
+                                                    />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="Profesor" class="form-label">Profesor</label>
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        name="Profesor"
+                                                        id="Profesor"
+                                                        placeholder="Profesor"
+                                                        disabled
+                                                        value="{{item.profesor}}"
+                                                    />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="Tema" class="form-label">Tema</label>
+                                                    <input
+                                                        type="text"
+                                                        class="form-control"
+                                                        name="Tema"
+                                                        id="Tema"
+                                                        placeholder="Tema"
+                                                        value="{{item.tema}}"
+                                                    />
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="Descripcion" class="form-label">Descripcion</label>
+                                                    <textarea class="form-control" name="Descripcion" id="Descripcion" rows="5"> {{item.descripcion}} </textarea>
+                                                </div>
+                                                
+                                                
+                                            </div>
+                                            <div class="modal-footer">|
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-primary"
+                                                >
+                                                    Enviar
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% endif %}
+
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <br><br>
+    </div>
+
+    <div id="IniciarSesion" class="container-fluid text-center" style="background-color: #000000">
+        <h1 class="h1" style="color: #ffffff">Iniciar Sesion</h1>
+        
+        {% if not request.user.is_authenticated %}
+            <p class="p" style="color: #ffffff">Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum, vel odit! Voluptate consectetur excepturi repellat, culpa, deleniti vitae facere aut libero, delectus reiciendis voluptatibus ab doloremque corrupti magnam numquam aliquam?</p>
+        {% else %}
+            <p class="p" style="color: #ffffff">Estas conectado.</p>
+        {% endif %}
+
+        <div class="container border text-center !round" style="background-color: #e5b300">
+
+            {% if not request.user.is_authenticated %}
+            <form class="row mb-5" action="{% url 'logging' %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="email" class="form-label">Usuario</label>
+                    <input type="text" class="form-control" id="usuario" name="usuario" placeholder="usuario">
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password"></input>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Conectarse</button>
+                </div>
+            </form>
+            {% else %}
+            <form class="row mb-5" action="{% url 'loggingOut' %}" method="post">
+                {% csrf_token %}
+                <h1 class="Display-2">Conectado como: {{ user.username }} </h1>
+                {% if request.user|has_group:"Profesor" %} 
+                    <h4> Tipo: Profesor </h4>
+                {% elif request.user|has_group:"Alumno" %}
+                    <h4> Tipo: Alumno </h4>
+                {% endif %}
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit">Cerrar sesion</button>
+                </div>
+            </form>
+
+            {% endif %}
+
+        </div>
+        <br><br><br>
+    </div>
+    
+    <footer style="background-color: #005e90">
+        <img src="../../static/core/img/version horizontal.png" class="img-fluid" alt="">
+    </footer>
+</body>
+</html>

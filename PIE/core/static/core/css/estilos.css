@@ -1,0 +1,10 @@
+.bg-img {
+    background-image: url("../img/svm.jpg");
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
